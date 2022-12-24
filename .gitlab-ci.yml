@@ -1,0 +1,11 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+  - build
+
+build_project:
+  stage: build
+  script:
+    - rm -rf .build
+    - swift build --product Cuisine -v --build-path .build/Cuisine
