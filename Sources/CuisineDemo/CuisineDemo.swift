@@ -36,7 +36,7 @@ public struct CuisineDemo {
                         }
                         "https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml"
                     }
-                    GetFile("https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml", pipeNameTo: \.empty)
+                    GetFile("https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml").storeName(in: \.empty)
                     Print(\.empty)
                 }
             }
