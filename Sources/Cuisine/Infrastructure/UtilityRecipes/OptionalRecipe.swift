@@ -24,8 +24,8 @@ extension OptionalRecipe: SupportsNonBlockingRecipes where Value: SupportsNonBlo
     }
 }
 
-extension OptionalRecipe: BinaryTreeRecipeProtocol where Value: BinaryTreeRecipeProtocol {
-    func perform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, any Swift.Error>, traversalMode: BinaryTreeRecipeTraversalMode) async throws {
+extension OptionalRecipe: TupleRecipeProtocol where Value: TupleRecipeProtocol {
+    func perform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, any Swift.Error>, traversalMode: TupleRecipeTraversalMode) async throws {
         try await recipe?.injectingPerform(in: kitchen, pantry: pantry, taskGroup: &group, traversalMode: traversalMode)
     }
 }

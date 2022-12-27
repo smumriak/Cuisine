@@ -12,7 +12,7 @@ public enum ForEachMode {
 }
 
 internal extension ForEachMode {
-    var binaryTreeTraversalMode: BinaryTreeRecipeTraversalMode {
+    var binaryTreeTraversalMode: TupleRecipeTraversalMode {
         switch self {
             case .default: return .default
             case .sequential: return .sequential
@@ -38,7 +38,7 @@ public struct ForEach<Data: RandomAccessCollection>: SupportsNonBlockingRecipes 
 
     func perform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, Error>) async throws {
         for recipe in recipes {
-            if let recipe = recipe as? BinaryTreeRecipeProtocol {
+            if let recipe = recipe as? TupleRecipeProtocol {
                 try await recipe.injectingPerform(in: kitchen, pantry: pantry, taskGroup: &group, traversalMode: mode.binaryTreeTraversalMode)
                 continue
             }

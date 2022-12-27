@@ -16,7 +16,7 @@ public struct Sequential: Recipe {
 
     public func perform(in kitchen: Kitchen, pantry: Pantry) async throws {
         for recipe in recipes {
-            if let recipe = recipe as? BinaryTreeRecipeProtocol {
+            if let recipe = recipe as? TupleRecipeProtocol {
                 try await withThrowingTaskGroup(of: Void.self) { group in
                     try await recipe.injectingPerform(in: kitchen, pantry: pantry, taskGroup: &group, traversalMode: .sequential)
                     try await group.waitForAll()

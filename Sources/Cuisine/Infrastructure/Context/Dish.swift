@@ -20,7 +20,7 @@ public struct RecipeBuilder {
     }
 
     public static func buildPartialBlock(accumulated left: some Recipe, next right: some Recipe) -> some Recipe {
-        BinaryTreeRecipe(left: left, right: right)
+        TupleRecipe(left: left, right: right)
     }
 
     public static func buildOptional(_ recipe: (some Recipe)?) -> some Recipe {
