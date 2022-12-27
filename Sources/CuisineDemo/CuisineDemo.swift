@@ -8,11 +8,11 @@
 import Cuisine
 
 public struct EmptyKey: PantryKey {
-    public static var defaultValue = "I am default"
+    public static var defaultValue: any StringProtocol = "I am default"
 }
 
 public extension Pantry {
-    var empty: String {
+    var empty: EmptyKey.Value {
         get {
             self[EmptyKey.self]
         }
