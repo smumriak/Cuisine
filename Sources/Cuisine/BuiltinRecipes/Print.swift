@@ -41,6 +41,7 @@ public struct Print: BlockingRecipe {
         case content(() -> ([String]))
         case stringKeyPath(Pantry.KeyPath<String>)
         case arrayKeyPath(Pantry.KeyPath<[String]>)
+        case formattedString(String, [Pantry.KeyPath<String>])
 
         func createText(pantry: Pantry) -> String {
             switch self {
@@ -52,6 +53,18 @@ public struct Print: BlockingRecipe {
 
                 case .arrayKeyPath(let keyPath):
                     return pantry[keyPath: keyPath].joined(separator: "\n")
+
+                case .formattedString(let format, let keyPaths):
+                    return format.split(separator: "%@")
+                        .enumerated()
+                        .map { element in
+                            if element.offset < keyPaths.count {
+                                return element.element + pantry[keyPath: keyPaths[element.offset]]
+                            } else {
+                                return element.element
+                            }
+                        }
+                        .joined()
             }
         }
     }
@@ -68,6 +81,10 @@ public struct Print: BlockingRecipe {
 
     public init(_ keyPath: Pantry.KeyPath<String>) {
         storage = .stringKeyPath(keyPath)
+    }
+
+    public init<T: StringProtocol>(format: T, _ keyPaths: Pantry.KeyPath<String>...) {
+        storage = .formattedString(String(format), keyPaths)
     }
 
     public init(_ keyPath: Pantry.KeyPath<[String]>) {

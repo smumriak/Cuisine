@@ -71,9 +71,9 @@ public extension Pantry {
         }
         
         @usableFromInline
-        internal let keyPath: WritableKeyPath<Pantry, Value>
+        internal let keyPath: ReferenceWritableKeyPath<Pantry, Value>
 
-        public init(_ keyPath: WritableKeyPath<Pantry, Value>) {
+        public init(_ keyPath: ReferenceWritableKeyPath<Pantry, Value>) {
             self.keyPath = keyPath
         }
     }

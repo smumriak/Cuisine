@@ -37,6 +37,8 @@ public struct CuisineDemo {
                         "https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml"
                     }
                     GetFile("https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml").storeName(in: \.empty)
+                    Print(format: "I am string format printing from keyPath. Printed value is %@ and I am happy about it!", \.empty)
+                    ClearPantryItem(at: \.empty)
                     Print(\.empty)
                 }
             }
