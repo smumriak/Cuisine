@@ -53,6 +53,7 @@ public struct Dish<Root: Recipe>: Recipe {
     }
 
     let storage: Storage
+    let pantry: Pantry?
 
     public func perform(in kitchen: any Kitchen, pantry: Pantry) async throws {
         let root: Root
@@ -69,15 +70,17 @@ public struct Dish<Root: Recipe>: Recipe {
     }
 
     public func cook(in kitchen: Kitchen = EmptyKitchen()) async throws {
-        let pantry = Pantry()
+        let pantry = pantry ?? Pantry()
         try await self.injectingPerform(in: kitchen, pantry: pantry)
     }
 
-    public init(@RecipeBuilder _ content: @escaping () -> (Root)) {
+    public init(_ pantry: Pantry? = nil, @RecipeBuilder _ content: @escaping () -> (Root)) {
         storage = .simple(content: content)
+        self.pantry = pantry
     }
 
-    public init(@RecipeBuilder _ content: @escaping (_ pantry: Pantry) -> (Root)) {
+    public init(_ pantry: Pantry? = nil, @RecipeBuilder _ content: @escaping (_ pantry: Pantry) -> (Root)) {
         storage = .complex(content: content)
+        self.pantry = pantry
     }
 }
