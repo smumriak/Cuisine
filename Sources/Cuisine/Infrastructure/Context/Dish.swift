@@ -46,9 +46,25 @@ public struct RecipeBuilder {
 
 public struct Dish<Root: Recipe>: Recipe {
     public let isBlocking = true
-    let root: Root
+
+    internal enum Storage {
+        case simple(content: () -> (Root))
+        case complex(content: (_ pantry: Pantry) -> (Root))
+    }
+
+    let storage: Storage
 
     public func perform(in kitchen: any Kitchen, pantry: Pantry) async throws {
+        let root: Root
+        
+        switch storage {
+            case .simple(let content):
+                root = content()
+
+            case .complex(let content):
+                root = content(pantry)
+        }
+
         try await root.injectingPerform(in: kitchen, pantry: pantry)
     }
 
@@ -58,6 +74,10 @@ public struct Dish<Root: Recipe>: Recipe {
     }
 
     public init(@RecipeBuilder _ content: @escaping () -> (Root)) {
-        root = content()
+        storage = .simple(content: content)
+    }
+
+    public init(@RecipeBuilder _ content: @escaping (_ pantry: Pantry) -> (Root)) {
+        storage = .complex(content: content)
     }
 }

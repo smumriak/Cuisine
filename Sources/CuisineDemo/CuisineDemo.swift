@@ -27,7 +27,7 @@ public struct CuisineDemo {
     public private(set) var text = "Hello, World!"
 
     public static func main() async throws {
-        let dish = Dish {
+        let dish = Dish { pantry in
             if true {
                 ChDir("hello") {
                     MultiFileGet {
@@ -44,6 +44,12 @@ public struct CuisineDemo {
                         "Remapping values here"
                     }
                     Print(\.empty)
+                    Map(\.empty, output: \.empty) { _ in
+                        "Empty"
+                    }
+                    If({ String(pantry.empty) == "Empty" }) {
+                        print("Printing inside if!")
+                    }
                 }
             }
             Group(blocking: false) {
