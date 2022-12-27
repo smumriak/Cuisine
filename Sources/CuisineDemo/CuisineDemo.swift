@@ -40,6 +40,10 @@ public struct CuisineDemo {
                     Print(format: "I am string format printing from keyPath. Printed value is %@ and I am happy about it!", \.empty)
                     ClearPantryItem(at: \.empty)
                     Print(\.empty)
+                    Map(\.empty, output: \.empty) { _ in
+                        "Remapping values here"
+                    }
+                    Print(\.empty)
                 }
             }
             Group(blocking: false) {
