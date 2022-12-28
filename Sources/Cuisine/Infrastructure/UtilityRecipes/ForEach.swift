@@ -21,15 +21,15 @@ internal extension ForEachMode {
     }
 }
 
-public struct ForEach<Data: RandomAccessCollection>: SupportsNonBlockingRecipes {
+public struct ForEach<Data: RandomAccessCollection, Content: Recipe>: SupportsNonBlockingRecipes {
     let data: Data
-    let content: (Data.Element) -> [any Recipe]
+    let content: (Data.Element) -> any Recipe
     let mode: ForEachMode
-    var recipes: [Recipe] { data.flatMap(content) }
+    var recipes: [Recipe] { data.map(content) }
 
     public var isBlocking: Bool
     
-    public init(_ data: Data, mode: ForEachMode = .default, blocking: Bool = true, @RecipeBuilder content: @escaping (Data.Element) -> [any Recipe]) {
+    public init(_ data: Data, mode: ForEachMode = .default, blocking: Bool = true, @RecipeBuilder content: @escaping (Data.Element) -> Content) {
         self.data = data
         self.content = content
         self.mode = mode

@@ -26,6 +26,9 @@ struct CuisineDemo: CuisineParsableCommand {
                     }
                     "https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml"
                 }
+                ForEach(1..<10) {
+                    Print("\($0)")
+                }
                 GetFile("https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml").storeName(in: \.sampleString)
                 Print(format: "I am string format printing from keyPath. Printed value is %@ and I am happy about it!", \.sampleString)
                 ClearPantryItem(at: \.sampleString)
