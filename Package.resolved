@@ -6,7 +6,7 @@
       "location" : "https://github.com/smumriak/AppKid",
       "state" : {
         "branch" : "main",
-        "revision" : "cd6a8c01364ef6591f75d2f8314bc12a7577ba46"
+        "revision" : "6941487e24ede29bf65b84a73528793a25428422"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
       "state" : {
-        "revision" : "e394bf350e38cb100b6bc4172834770ede1b7232",
-        "version" : "1.0.3"
+        "revision" : "fddd1c00396eed152c45a46bea9f47b98e59301d",
+        "version" : "1.2.0"
       }
     },
     {
@@ -57,7 +57,7 @@
     {
       "identity" : "swift-system",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-system",
+      "location" : "https://github.com/apple/swift-system.git",
       "state" : {
         "revision" : "836bc4557b74fe6d2660218d56e3ce96aff76574",
         "version" : "1.1.1"

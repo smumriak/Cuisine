@@ -39,9 +39,9 @@ public struct Print: BlockingRecipe {
 
     enum Storage {
         case content(() -> ([String]))
-        case stringKeyPath(Pantry.KeyPath<any StringProtocol>)
-        case arrayKeyPath(Pantry.KeyPath<[any StringProtocol]>)
-        case formattedString(String, [Pantry.KeyPath<any StringProtocol>])
+        case stringKeyPath(Pantry.KeyPath<String>)
+        case arrayKeyPath(Pantry.KeyPath<[String]>)
+        case formattedString(String, [Pantry.KeyPath<String>])
 
         func createText(pantry: Pantry) -> String {
             switch self {
@@ -82,15 +82,15 @@ public struct Print: BlockingRecipe {
         storage = .content { strings.map { $0 } }
     }
 
-    public init(_ keyPath: Pantry.KeyPath<any StringProtocol>) {
+    public init(_ keyPath: Pantry.KeyPath<String>) {
         storage = .stringKeyPath(keyPath)
     }
 
-    public init<T: StringProtocol>(format: T, _ keyPaths: Pantry.KeyPath<any StringProtocol>...) {
+    public init<T: StringProtocol>(format: T, _ keyPaths: Pantry.KeyPath<String>...) {
         storage = .formattedString(String(format), keyPaths)
     }
 
-    public init(_ keyPath: Pantry.KeyPath<[any StringProtocol]>) {
+    public init(_ keyPath: Pantry.KeyPath<[String]>) {
         storage = .arrayKeyPath(keyPath)
     }
 

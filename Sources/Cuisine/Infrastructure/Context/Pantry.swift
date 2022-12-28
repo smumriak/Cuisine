@@ -10,7 +10,7 @@ import TinyFoundation
 
 // smumriak:could have been actor, but swift decided NOT TO support keypaths for actors
 // smumriak:thinking about this more: it's *better* to have unfairly locked synchronization here because it removes time inconsistency of sending messages to actors from different tasks
-public final class Pantry {
+public final class Pantry: Codable {
     public init() {}
     public subscript<K: PantryKey>(key: K.Type) -> K.Value {
         get {
@@ -27,6 +27,10 @@ public final class Pantry {
 
     @Synchronized
     private var elements: [ObjectIdentifier: Any] = [:]
+
+    // Fake codable to make this work as stored property for now. This should be properly codable tho
+    public init(from decoder: Decoder) throws {}
+    public func encode(to encoder: Encoder) throws {}
 }
 
 internal protocol PantryItem {

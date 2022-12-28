@@ -18,17 +18,17 @@ public struct GetFile: Recipe {
 
     internal let url: URL
     var urls: [URL] { [url] }
-    internal var keyPath: Pantry.KeyPath<any StringProtocol>?
+    internal var keyPath: Pantry.KeyPath<String>?
 
     public let isBlocking: Bool
 
-    public init(_ url: URL, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<any StringProtocol>? = nil) {
+    public init(_ url: URL, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String>? = nil) {
         self.url = url
         isBlocking = blocking
         self.keyPath = keyPath
     }
 
-    public init(_ urlString: some StringProtocol, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<any StringProtocol>? = nil) {
+    public init(_ urlString: some StringProtocol, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String>? = nil) {
         self.init(URL(string: String(urlString))!, blocking: blocking, storeNameIn: keyPath)
     }
 
@@ -164,7 +164,7 @@ public struct MultiFileGet: Recipe {
 
 public extension GetFile {
     struct StoreNameInModifier: RecipeModifier {
-        public let keyPath: Pantry.KeyPath<any StringProtocol>
+        public let keyPath: Pantry.KeyPath<String>
         
         public func body(content: GetFile) -> some Recipe {
             var copy = content
@@ -173,7 +173,7 @@ public extension GetFile {
         }
     }
 
-    func storeName(in keyPath: Pantry.KeyPath<any StringProtocol>) -> some Recipe {
+    func storeName(in keyPath: Pantry.KeyPath<String>) -> some Recipe {
         modifier(StoreNameInModifier(keyPath: keyPath))
     }
 }

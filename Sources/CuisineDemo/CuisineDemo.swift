@@ -6,93 +6,97 @@
 //
 
 import Cuisine
+import CuisineArgumentParser
+import ArgumentParser
 
-public struct EmptyKey: PantryKey {
-    public static var defaultValue: any StringProtocol = "I am default"
-}
+@main
+struct CuisineDemo: CuisineParsableCommand {
+    var pantry: Pantry = Pantry()
 
-public extension Pantry {
-    var empty: EmptyKey.Value {
-        get {
-            self[EmptyKey.self]
+    @Argument(help: "The phrase to repeat.")
+    var phrase: String = "Sample Phrase"
+
+    var body: some Recipe {
+        if true {
+            ChDir("hello") {
+                Print(phrase)
+                MultiFileGet {
+                    if true {
+                        "https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml"
+                    }
+                    "https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml"
+                }
+                GetFile("https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml").storeName(in: \.sampleString)
+                Print(format: "I am string format printing from keyPath. Printed value is %@ and I am happy about it!", \.sampleString)
+                ClearPantryItem(at: \.sampleString)
+                Print(\.sampleString)
+                Map(\.sampleString, output: \.sampleString) { _ in
+                    if pantry.sampleString == "" {
+                    }
+                    return "Remapping values here"
+                }
+                Print(\.sampleString)
+                Map(\.sampleString, output: \.sampleString) { _ in
+                    "Empty"
+                }
+                If({ String($0.sampleString) == "Empty" }) {
+                    print("Printing inside if!")
+                }
+            }
         }
-        set {
-            self[EmptyKey.self] = newValue
+        Group(blocking: false) {
+            Group(blocking: false) {
+                Print {
+                    "Print recipe 1: first line"
+                    "Print recipe 1: second line"
+                }
+
+                Print {
+                    if true {
+                        "Print recipe 2: body of if-true"
+                    }
+                }
+                Run("echo") {
+                    "Hello, Shell!"
+                    "This is a multi-string echo command!"
+                }
+            }
+            Print {
+                "Last print recipe"
+            }
+            Script {
+                """
+                #!/bin/bash
+                echo I can run scripts as is.
+                for WORD in one two three four five six seven eight
+                do
+                    echo $WORD
+                done
+                exit 0
+                """
+            }
+        }
+
+        Concurrent {
+            Print("Concurrent print 1")
+            Print("Concurrent print 2")
+            Print("Concurrent print 3")
+            Print("Concurrent print 4")
         }
     }
 }
 
-@main
-public struct CuisineDemo {
-    public private(set) var text = "Hello, World!"
+public struct SampleStringKey: PantryKey {
+    public static var defaultValue: String = "Sample String"
+}
 
-    public static func main() async throws {
-        let dish = Dish { pantry in
-            if true {
-                ChDir("hello") {
-                    MultiFileGet {
-                        if true {
-                            "https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml"
-                        }
-                        "https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml"
-                    }
-                    GetFile("https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml").storeName(in: \.empty)
-                    Print(format: "I am string format printing from keyPath. Printed value is %@ and I am happy about it!", \.empty)
-                    ClearPantryItem(at: \.empty)
-                    Print(\.empty)
-                    Map(\.empty, output: \.empty) { _ in
-                        "Remapping values here"
-                    }
-                    Print(\.empty)
-                    Map(\.empty, output: \.empty) { _ in
-                        "Empty"
-                    }
-                    If({ String(pantry.empty) == "Empty" }) {
-                        print("Printing inside if!")
-                    }
-                }
-            }
-            Group(blocking: false) {
-                Group(blocking: false) {
-                    Print {
-                        "Print recipe 1: first line"
-                        "Print recipe 1: second line"
-                    }
-
-                    Print {
-                        if true {
-                            "Print recipe 2: body of if-true"
-                        }
-                    }
-                    Run("echo") {
-                        "Hello, Shell!"
-                        "This is a multi-string echo command!"
-                    }
-                }
-                Print {
-                    "Last print recipe"
-                }
-                Script {
-                    """
-                    #!/bin/bash
-                    echo I can run scripts as is.
-                    for WORD in one two three four five six seven eight
-                    do
-                        echo $WORD
-                    done
-                    exit 0
-                    """
-                }
-            }
-
-            Concurrent {
-                Print("Concurrent print 1")
-                Print("Concurrent print 2")
-                Print("Concurrent print 3")
-                Print("Concurrent print 4")
-            }
+public extension Pantry {
+    var sampleString: SampleStringKey.Value {
+        get {
+            self[SampleStringKey.self]
         }
-
-        try await dish.cook()
+        set {
+            self[SampleStringKey.self] = newValue
+        }
     }
 }

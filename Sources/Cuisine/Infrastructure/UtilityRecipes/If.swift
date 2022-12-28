@@ -13,7 +13,8 @@ public struct If: Recipe {
     internal enum Storage {
         case keyPath(keyPath: Pantry.KeyPath<Bool>)
         case value(Bool)
-        case expression(() -> (Bool))
+        case simpleExpression(() -> (Bool))
+        case complexExpression((_ pantry: Pantry) -> (Bool))
     }
 
     let storage: Storage
@@ -33,7 +34,11 @@ public struct If: Recipe {
     }
 
     public init(_ expression: @escaping () -> (Bool), blocking: Bool = true, _ body: @escaping Body) {
-        self.init(storage: .expression(expression), blocking: blocking, body: body)
+        self.init(storage: .simpleExpression(expression), blocking: blocking, body: body)
+    }
+
+    public init(_ expression: @escaping (_ pantry: Pantry) -> (Bool), blocking: Bool = true, _ body: @escaping Body) {
+        self.init(storage: .complexExpression(expression), blocking: blocking, body: body)
     }
 
     public func perform(in kitchen: Kitchen, pantry: Pantry) async throws {
@@ -44,7 +49,10 @@ public struct If: Recipe {
             case .value(let value) where value == true:
                 try await body()
 
-            case .expression(let expression) where expression() == true:
+            case .simpleExpression(let expression) where expression() == true:
+                try await body()
+
+            case .complexExpression(let expression) where expression(pantry) == true:
                 try await body()
 
             default:
