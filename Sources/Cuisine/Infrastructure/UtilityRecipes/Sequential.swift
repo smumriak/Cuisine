@@ -7,7 +7,7 @@
 
 public struct Sequential: Recipe {
     let recipes: [any Recipe]
-    public var isBlocking: Bool
+    public let isBlocking: Bool
     
     public init(blocking: Bool = true, @RecipeBuilder _ content: () -> ([any Recipe])) {
         recipes = content()

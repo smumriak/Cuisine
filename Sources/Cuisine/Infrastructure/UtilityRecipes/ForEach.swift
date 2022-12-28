@@ -27,7 +27,7 @@ public struct ForEach<Data: RandomAccessCollection, Content: Recipe>: SupportsNo
     let mode: ForEachMode
     var recipes: [Recipe] { data.map(content) }
 
-    public var isBlocking: Bool
+    public let isBlocking: Bool
     
     public init(_ data: Data, mode: ForEachMode = .default, blocking: Bool = true, @RecipeBuilder content: @escaping (Data.Element) -> Content) {
         self.data = data

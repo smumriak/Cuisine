@@ -7,7 +7,7 @@
 
 public struct Concurrent: SupportsNonBlockingRecipes {
     let recipes: [any Recipe]
-    public var isBlocking: Bool
+    public let isBlocking: Bool
 
     public init(_ recipes: [any Recipe], blocking: Bool = true) {
         self.recipes = recipes

@@ -43,17 +43,65 @@ public struct Run: Recipe {
         }
     }
 
-    public var isBlocking: Bool
+    public let isBlocking: Bool
     let command: String
-    let arguments: [String]
 
-    public init(_ command: String, blocking: Bool = true, @Builder _ content: () -> ([String]) = { return [] }) {
+    enum Storage {
+        case stringArray(content: [String])
+        case simple(content: () -> ([String]))
+        case complex(content: (_ pantry: Pantry) -> ([String]))
+    }
+
+    let storage: Storage
+
+    public init(_ command: String, argument: String, blocking: Bool = true) {
         self.command = command
-        arguments = content()
+        storage = .stringArray(content: [argument])
+        isBlocking = blocking
+    }
+
+    public init(_ command: String, arguments: [String], blocking: Bool = true) {
+        self.command = command
+        storage = .stringArray(content: arguments)
+        isBlocking = blocking
+    }
+
+    public init(_ command: String, blocking: Bool = true, @Builder _ content: @escaping () -> (String)) {
+        self.command = command
+        storage = .simple { [content()] }
+        isBlocking = blocking
+    }
+
+    public init(_ command: String, blocking: Bool = true, @Builder _ content: @escaping () -> ([String]) = { return [] }) {
+        self.command = command
+        storage = .simple(content: content)
+        isBlocking = blocking
+    }
+
+    public init(_ command: String, blocking: Bool = true, @Builder _ content: @escaping (_ pantry: Pantry) -> (String)) {
+        self.command = command
+        storage = .complex { [content($0)] }
+        isBlocking = blocking
+    }
+
+    public init(_ command: String, blocking: Bool = true, @Builder _ content: @escaping (_ pantry: Pantry) -> ([String])) {
+        self.command = command
+        storage = .complex(content: content)
         isBlocking = blocking
     }
 
     public func perform(in kitchen: any Kitchen, pantry: Pantry) async throws {
+        let arguments: [String]
+        switch storage {
+            case .stringArray(let content):
+                arguments = content
+
+            case .simple(let content):
+                arguments = content()
+
+            case .complex(let content):
+                arguments = content(pantry)
+        }
         let output = try shellOut(to: command, arguments: arguments, at: kitchen.currentDirectory.absoluteURL.path)
         print(output)
     }

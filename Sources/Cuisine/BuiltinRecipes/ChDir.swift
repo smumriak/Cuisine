@@ -30,7 +30,7 @@ public struct ChDir: Recipe {
 
     internal let root: any Recipe
     internal var path: FilePath
-    public var isBlocking: Bool
+    public let isBlocking: Bool
 
     public init(_ path: String, blocking: Bool = true, @RecipeBuilder _ content: () -> (some Recipe) = { EmptyRecipe() }) {
         self.init(FilePath(path), blocking: blocking, content)

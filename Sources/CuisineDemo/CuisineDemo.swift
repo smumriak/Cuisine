@@ -26,7 +26,7 @@ struct CuisineDemo: CuisineParsableCommand {
                     }
                     "https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml"
                 }
-                ForEach(1..<10) {
+                ForEach(1..<10, mode: .concurrent) {
                     Print("\($0)")
                 }
                 GetFile("https://raw.githubusercontent.com/smumriak/AppKid/main/.gitlab-ci.yml").storeName(in: \.sampleString)
@@ -53,7 +53,6 @@ struct CuisineDemo: CuisineParsableCommand {
                     "Print recipe 1: first line"
                     "Print recipe 1: second line"
                 }
-
                 Print {
                     if true {
                         "Print recipe 2: body of if-true"
