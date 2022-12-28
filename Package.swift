@@ -5,6 +5,10 @@ import PackageDescription
 
 let package = Package(
     name: "Cuisine",
+    products: [
+        .library(name: "Cuisine", targets: ["Cuisine"]),
+        .library(name: "CuisineArgumentParser", targets: ["CuisineArgumentParser"]),
+    ],
     dependencies: [
         .package(url: "https://github.com/smumriak/ShellOut.git", branch: "master"),
         .package(url: "https://github.com/apple/swift-system", from: "1.0.0"),
