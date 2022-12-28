@@ -18,14 +18,28 @@ public struct GetFile: Recipe {
 
     internal let url: URL
     var urls: [URL] { [url] }
-    internal var keyPath: Pantry.KeyPath<String>?
+
+    enum KeyPathStorage {
+        case optional(_ keyPath: Pantry.KeyPath<String?>)
+        case nonOptional(_ keyPath: Pantry.KeyPath<String>)
+    }
+
+    internal var keyPathStorage: KeyPathStorage?
 
     public let isBlocking: Bool
 
     public init(_ url: URL, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String>? = nil) {
         self.url = url
         isBlocking = blocking
-        self.keyPath = keyPath
+        if let keyPath {
+            keyPathStorage = .nonOptional(keyPath)
+        }
+    }
+
+    public init(_ url: URL, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String?>) {
+        self.url = url
+        isBlocking = blocking
+        keyPathStorage = .optional(keyPath)
     }
 
     public init(_ urlString: some StringProtocol, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String>? = nil) {
@@ -49,8 +63,14 @@ public struct GetFile: Recipe {
             }
             try fileManager.moveItem(at: fileURL, to: destinationURL)
 
-            if let keyPath {
-                pantry[keyPath: keyPath] = suggestedFilename
+            if let keyPathStorage {
+                switch keyPathStorage {
+                    case .optional(let keyPath):
+                        pantry[keyPath: keyPath] = suggestedFilename
+
+                    case .nonOptional(let keyPath):
+                        pantry[keyPath: keyPath] = suggestedFilename
+                }
             }
         }
     }
@@ -164,16 +184,28 @@ public struct MultiFileGet: Recipe {
 
 public extension GetFile {
     struct StoreNameInModifier: RecipeModifier {
-        public let keyPath: Pantry.KeyPath<String>
+        let storage: GetFile.KeyPathStorage
+
+        init(keyPath: Pantry.KeyPath<String>) {
+            storage = .nonOptional(keyPath)
+        }
+
+        init(keyPath: Pantry.KeyPath<String?>) {
+            storage = .optional(keyPath)
+        }
         
         public func body(content: GetFile) -> some Recipe {
             var copy = content
-            copy.keyPath = keyPath
+            copy.keyPathStorage = storage
             return copy
         }
     }
 
     func storeName(in keyPath: Pantry.KeyPath<String>) -> some Recipe {
+        modifier(StoreNameInModifier(keyPath: keyPath))
+    }
+
+    func storeName(in keyPath: Pantry.KeyPath<String?>) -> some Recipe {
         modifier(StoreNameInModifier(keyPath: keyPath))
     }
 }
