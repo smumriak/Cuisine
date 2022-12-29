@@ -20,11 +20,7 @@ public struct ChDir: Recipe {
         init(path: FilePath, kitchen: any Kitchen) {
             self.kitchen = kitchen
 
-            if !path.isAbsolute {
-                currentDirectory = URL(fileURLWithPath: path.string, isDirectory: false, relativeTo: kitchen.currentDirectory)
-            } else {
-                currentDirectory = URL(fileURLWithPath: path.string, isDirectory: false)
-            }
+            currentDirectory = path.toURL(workingDirectory: kitchen.currentDirectory)
         }
     }
 
@@ -59,5 +55,15 @@ public struct ChDir: Recipe {
         }
 
         return table
+    }
+}
+
+internal extension FilePath {
+    func toURL(workingDirectory: URL) -> URL {
+        if isAbsolute == false {
+            return URL(fileURLWithPath: string, isDirectory: false, relativeTo: workingDirectory)
+        } else {
+            return URL(fileURLWithPath: string, isDirectory: false)
+        }
     }
 }

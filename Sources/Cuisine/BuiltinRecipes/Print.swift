@@ -41,7 +41,7 @@ public struct Print: BlockingRecipe {
         case content(() -> ([String]))
         case stringKeyPath(Pantry.KeyPath<String>)
         case arrayKeyPath(Pantry.KeyPath<[String]>)
-        case formattedString(String, [Pantry.KeyPath<String>])
+        case formattedStringKeyPath(String, [Pantry.KeyPath<String>])
 
         func createText(pantry: Pantry) -> String {
             switch self {
@@ -56,18 +56,12 @@ public struct Print: BlockingRecipe {
                     let value = pantry[keyPath: keyPath]
                     return value.map { String($0) }.joined(separator: "\n")
 
-                case .formattedString(let format, let keyPaths):
-                    return format.split(separator: "%@")
-                        .enumerated()
-                        .map { element in
-                            if element.offset < keyPaths.count {
-                                let value = pantry[keyPath: keyPaths[element.offset]]
-                                return element.element + value
-                            } else {
-                                return element.element
-                            }
-                        }
-                        .joined()
+                case .formattedStringKeyPath(let format, let keyPaths):
+                    let strings = keyPaths.map {
+                        pantry[keyPath: $0]
+                    }
+
+                    return format.asCuisineFormat(with: strings)
             }
         }
     }
@@ -87,7 +81,7 @@ public struct Print: BlockingRecipe {
     }
 
     public init<T: StringProtocol>(format: T, _ keyPaths: Pantry.KeyPath<String>...) {
-        storage = .formattedString(String(format), keyPaths)
+        storage = .formattedStringKeyPath(String(format), keyPaths)
     }
 
     public init(_ keyPath: Pantry.KeyPath<[String]>) {
@@ -97,5 +91,24 @@ public struct Print: BlockingRecipe {
     public func perform(in kitchen: any Kitchen, pantry: Pantry) async throws {
         let text = storage.createText(pantry: pantry)
         print(text)
+    }
+}
+
+public extension StringProtocol {
+    func asCuisineFormat(with values: [String]) -> String {
+        split(separator: "%@")
+            .enumerated()
+            .map { element in
+                if element.offset < values.count {
+                    return element.element + values[element.offset]
+                } else {
+                    return String(element.element)
+                }
+            }
+            .joined()
+    }
+
+    func asCuisineFormat(with values: String...) -> String {
+        asCuisineFormat(with: values)
     }
 }
