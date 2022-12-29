@@ -26,18 +26,18 @@ struct SwiftBootstrap: CuisineParsableCommand {
     ChDir(name) {
       ChDir(".vscode", blocking: false) {
         Concurrent {
-          WriteFile("settings.json", format: vscodeSettings, swiftLocation)
-          WriteFile("tasks.json") { vscodeTasks }
-          WriteFile("launch.json", format: vscodeLaunch, name.repeat(3))
-          WriteFile("extensions.json") { extensions }
+          WriteToFile("settings.json", format: vscodeSettings, swiftLocation)
+          WriteToFile("tasks.json") { vscodeTasks }
+          WriteToFile("launch.json", format: vscodeLaunch, name.repeat(3))
+          WriteToFile("extensions.json") { extensions }
         }
       }
       Concurrent {
         if addGitIgnore {
-          WriteFile(".gitignore") { gitignore }
+          WriteToFile(".gitignore") { gitignore }
         }
         if addSwiftFormat {
-          WriteFile(".swiftformat") { swiftformat }
+          WriteToFile(".swiftformat") { swiftformat }
         }
         Run("swift package init") {
           "--type \(type)"

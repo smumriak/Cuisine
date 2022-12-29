@@ -1,5 +1,5 @@
 //
-//  WriteFile.swift
+//  WriteToFile.swift
 //  Cuisine
 //
 //  Created by Serhii Mumriak on 28.12.2022
@@ -8,7 +8,7 @@
 import Foundation
 import SystemPackage
 
-public struct WriteFile: BlockingRecipe {
+public struct WriteToFile: BlockingRecipe {
     enum LocationStorage {
         case string(String)
         case stringKeyPath(Pantry.KeyPath<String>)
