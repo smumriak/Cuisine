@@ -9,7 +9,7 @@ import Foundation
 import FoundationNetworking
 import SystemPackage
 
-public struct ChDir: Recipe {
+public struct ChDir<T: Recipe>: Recipe {
     internal struct Table: Cuisine.Table {
         let kitchen: any Kitchen
 
@@ -24,29 +24,29 @@ public struct ChDir: Recipe {
         }
     }
 
-    internal let root: any Recipe
+    internal let content: () -> (T)
     internal var path: FilePath
     public let isBlocking: Bool
 
-    public init(_ path: String, blocking: Bool = true, @RecipeBuilder _ content: () -> (some Recipe) = { EmptyRecipe() }) {
+    public init(_ path: String, blocking: Bool = true, @RecipeBuilder _ content: @escaping () -> (T) = { EmptyRecipe() }) {
         self.init(FilePath(path), blocking: blocking, content)
     }
 
-    public init(_ path: FilePath, blocking: Bool = true, @RecipeBuilder _ content: () -> (some Recipe) = { EmptyRecipe() }) {
-        root = content()
+    public init(_ path: FilePath, blocking: Bool = true, @RecipeBuilder _ content: @escaping () -> (T) = { EmptyRecipe() }) {
+        self.content = content
         self.path = path
         isBlocking = blocking
     }
 
     public func perform(in kitchen: any Kitchen, pantry: Pantry) async throws {
         let table = try table(for: kitchen)
-        
+        let root = content()
         try await root.injectingPerform(in: table, pantry: pantry)
     }
 
     internal func table(for kitchen: Kitchen) throws -> ChDir.Table {
         let table = ChDir.Table(path: path, kitchen: kitchen)
-        
+
         let fileManager = FileManager.default
         var isDirectory: ObjCBool = false
         
@@ -60,10 +60,11 @@ public struct ChDir: Recipe {
 
 internal extension FilePath {
     func toURL(workingDirectory: URL) -> URL {
+        let value = lexicallyNormalized().string
         if isAbsolute == false {
-            return URL(fileURLWithPath: string, isDirectory: false, relativeTo: workingDirectory)
+            return workingDirectory.appendingPathComponent(value)
         } else {
-            return URL(fileURLWithPath: string, isDirectory: false)
+            return URL(fileURLWithPath: value, isDirectory: false)
         }
     }
 }
