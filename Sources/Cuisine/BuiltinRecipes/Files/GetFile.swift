@@ -22,9 +22,19 @@ public struct GetFile: Recipe {
     enum KeyPathStorage {
         case optional(_ keyPath: Pantry.KeyPath<String?>)
         case nonOptional(_ keyPath: Pantry.KeyPath<String>)
+
+        func store(value: String, in pantry: Pantry) {
+            switch self {
+                case .optional(let keyPath):
+                    pantry[keyPath: keyPath] = value
+
+                case .nonOptional(let keyPath):
+                    pantry[keyPath: keyPath] = value
+            }
+        }
     }
 
-    internal var keyPathStorage: KeyPathStorage?
+    internal var nameKeyPath: KeyPathStorage?
 
     public let isBlocking: Bool
 
@@ -32,14 +42,14 @@ public struct GetFile: Recipe {
         self.url = url
         isBlocking = blocking
         if let keyPath {
-            keyPathStorage = .nonOptional(keyPath)
+            nameKeyPath = .nonOptional(keyPath)
         }
     }
 
     public init(_ url: URL, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String?>) {
         self.url = url
         isBlocking = blocking
-        keyPathStorage = .optional(keyPath)
+        nameKeyPath = .optional(keyPath)
     }
 
     public init(_ urlString: some StringProtocol, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String>? = nil) {
@@ -63,15 +73,7 @@ public struct GetFile: Recipe {
             }
             try fileManager.moveItem(at: fileURL, to: destinationURL)
 
-            if let keyPathStorage {
-                switch keyPathStorage {
-                    case .optional(let keyPath):
-                        pantry[keyPath: keyPath] = suggestedFilename
-
-                    case .nonOptional(let keyPath):
-                        pantry[keyPath: keyPath] = suggestedFilename
-                }
-            }
+            nameKeyPath?.store(value: suggestedFilename, in: pantry)
         }
     }
 }
@@ -196,7 +198,7 @@ public extension GetFile {
         
         public func body(content: GetFile) -> some Recipe {
             var copy = content
-            copy.keyPathStorage = storage
+            copy.nameKeyPath = storage
             return copy
         }
     }
