@@ -11,29 +11,28 @@ import SystemPackage
 
 public struct GetFile: Recipe {
     public enum Error: Swift.Error {
+        case unexpectedNilURL
         case badResponseType(url: URL)
         case fileCreationFailed(url: URL)
         case badResponseCode(url: URL, code: Int)
     }
 
-    internal let url: URL
-    var urls: [URL] { [url] }
-
+    internal let location: any URLInput
     internal var pathOutput: (any FilePathOutput)?
 
     public let isBlocking: Bool
 
-    public init<T: FilePathOutput>(_ url: URL, blocking: Bool = true, storePathIn pathOutput: T? = nil) {
-        self.url = url
+    public init<I: URLInput, O: FilePathOutput>(_ location: I, blocking: Bool = true, storePathIn pathOutput: O? = nil) {
+        self.location = location
         isBlocking = blocking
         self.pathOutput = pathOutput
     }
 
-    public init(_ urlString: some StringProtocol, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String>? = nil) {
-        self.init(URL(string: String(urlString))!, blocking: blocking, storePathIn: keyPath)
-    }
-
     public func perform(in kitchen: any Kitchen, pantry: Pantry) async throws {
+        guard let url = location.url(pantry: pantry) else {
+            throw Error.unexpectedNilURL
+        }
+
         let fileManager = FileManager.default
 
         let destinationURL: URL
