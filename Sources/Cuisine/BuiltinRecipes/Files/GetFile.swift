@@ -19,62 +19,41 @@ public struct GetFile: Recipe {
     internal let url: URL
     var urls: [URL] { [url] }
 
-    enum KeyPathStorage {
-        case optional(_ keyPath: Pantry.KeyPath<String?>)
-        case nonOptional(_ keyPath: Pantry.KeyPath<String>)
-
-        func store(value: String, in pantry: Pantry) {
-            switch self {
-                case .optional(let keyPath):
-                    pantry[keyPath: keyPath] = value
-
-                case .nonOptional(let keyPath):
-                    pantry[keyPath: keyPath] = value
-            }
-        }
-    }
-
-    internal var nameKeyPath: KeyPathStorage?
+    internal var pathOutput: (any FilePathOutput)?
 
     public let isBlocking: Bool
 
-    public init(_ url: URL, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String>? = nil) {
+    public init<T: FilePathOutput>(_ url: URL, blocking: Bool = true, storePathIn pathOutput: T? = nil) {
         self.url = url
         isBlocking = blocking
-        if let keyPath {
-            nameKeyPath = .nonOptional(keyPath)
-        }
-    }
-
-    public init(_ url: URL, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String?>) {
-        self.url = url
-        isBlocking = blocking
-        nameKeyPath = .optional(keyPath)
+        self.pathOutput = pathOutput
     }
 
     public init(_ urlString: some StringProtocol, blocking: Bool = true, storeNameIn keyPath: Pantry.KeyPath<String>? = nil) {
-        self.init(URL(string: String(urlString))!, blocking: blocking, storeNameIn: keyPath)
+        self.init(URL(string: String(urlString))!, blocking: blocking, storePathIn: keyPath)
     }
 
     public func perform(in kitchen: any Kitchen, pantry: Pantry) async throws {
         let fileManager = FileManager.default
 
+        let destinationURL: URL
+
         if url.isFileURL {
-            let destinationURL = kitchen.currentDirectory.appendingPathComponent(url.lastPathComponent)
+            destinationURL = kitchen.currentDirectory.appendingPathComponent(url.lastPathComponent)
             try fileManager.moveItem(at: url, to: destinationURL)
         } else {
             let suggestedFilename = url.lastPathComponent
 
             let (fileURL, _) = try await kitchen.urlSession.downloadFile(at: url)
 
-            let destinationURL = kitchen.currentDirectory.appendingPathComponent(suggestedFilename)
+            destinationURL = kitchen.currentDirectory.appendingPathComponent(suggestedFilename)
             if fileManager.fileExists(atPath: destinationURL.path) {
                 try fileManager.removeItem(at: destinationURL)
             }
             try fileManager.moveItem(at: fileURL, to: destinationURL)
-
-            nameKeyPath?.store(value: suggestedFilename, in: pantry)
         }
+
+        pathOutput?.store(filePath: destinationURL.absoluteURL.path, pantry: pantry, isDirectory: destinationURL.hasDirectoryPath)
     }
 }
 
@@ -185,29 +164,21 @@ public struct MultiFileGet: Recipe {
 }
 
 public extension GetFile {
-    struct StoreNameInModifier: RecipeModifier {
-        let storage: GetFile.KeyPathStorage
+    struct StorePathInModifier: RecipeModifier {
+        let storage: any FilePathOutput
 
-        init(keyPath: Pantry.KeyPath<String>) {
-            storage = .nonOptional(keyPath)
-        }
-
-        init(keyPath: Pantry.KeyPath<String?>) {
-            storage = .optional(keyPath)
+        init<T: FilePathOutput>(storage: T) {
+            self.storage = storage
         }
         
         public func body(content: GetFile) -> some Recipe {
             var copy = content
-            copy.nameKeyPath = storage
+            copy.pathOutput = storage
             return copy
         }
     }
 
-    func storeName(in keyPath: Pantry.KeyPath<String>) -> some Recipe {
-        modifier(StoreNameInModifier(keyPath: keyPath))
-    }
-
-    func storeName(in keyPath: Pantry.KeyPath<String?>) -> some Recipe {
-        modifier(StoreNameInModifier(keyPath: keyPath))
+    func storePath<S: FilePathOutput>(in storage: S) -> some Recipe {
+        modifier(StorePathInModifier(storage: storage))
     }
 }

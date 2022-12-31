@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SystemPackage
 
 public struct Untar: BlockingRecipe {
     public enum Error: Swift.Error {
@@ -14,72 +15,16 @@ public struct Untar: BlockingRecipe {
         case doesNotExist
     }
 
-    enum ContentStorage {
-        case url(URL)
-        case keyPath(Pantry.KeyPath<URL>)
-        case optionalKeyPath(Pantry.KeyPath<URL?>)
-    }
+    internal let pathInput: any FilePathInput
+    internal var pathOutput: (any FilePathOutput)?
 
-    internal let content: ContentStorage
-    internal var nameKeyPath: GetFile.KeyPathStorage?
-
-    public init(_ url: URL, storeNameIn nameKeyPath: Pantry.KeyPath<String>? = nil) {
-        content = .url(url)
-        if let nameKeyPath {
-            self.nameKeyPath = .nonOptional(nameKeyPath)
-        }
-    }
-
-    public init(_ url: URL, storeNameIn nameKeyPath: Pantry.KeyPath<String?>?) {
-        content = .url(url)
-        if let nameKeyPath {
-            self.nameKeyPath = .optional(nameKeyPath)
-        }
-    }
-
-    public init(_ keyPath: Pantry.KeyPath<URL>, storeNameIn nameKeyPath: Pantry.KeyPath<String>? = nil) {
-        content = .keyPath(keyPath)
-        if let nameKeyPath {
-            self.nameKeyPath = .nonOptional(nameKeyPath)
-        }
-    }
-
-    public init(_ keyPath: Pantry.KeyPath<URL>, storeNameIn nameKeyPath: Pantry.KeyPath<String?>?) {
-        content = .keyPath(keyPath)
-        if let nameKeyPath {
-            self.nameKeyPath = .optional(nameKeyPath)
-        }
-    }
-
-    public init(_ keyPath: Pantry.KeyPath<URL?>, storeNameIn nameKeyPath: Pantry.KeyPath<String>? = nil) {
-        content = .optionalKeyPath(keyPath)
-        if let nameKeyPath {
-            self.nameKeyPath = .nonOptional(nameKeyPath)
-        }
-    }
-
-    public init(_ keyPath: Pantry.KeyPath<URL?>, storeNameIn nameKeyPath: Pantry.KeyPath<String?>?) {
-        content = .optionalKeyPath(keyPath)
-        if let nameKeyPath {
-            self.nameKeyPath = .optional(nameKeyPath)
-        }
-    }
-
-    func url(pantry: Pantry) -> URL? {
-        switch content {
-            case .url(let content):
-                return content
-
-            case .keyPath(let content):
-                return pantry[keyPath: content]
-                
-            case .optionalKeyPath(let content):
-                return pantry[keyPath: content]
-        }
+    init<I: FilePathInput, O: FilePathOutput>(_ pathInput: I, storePathIn pathOutput: O? = nil) {
+        self.pathInput = pathInput
+        self.pathOutput = pathOutput
     }
 
     public func perform(in kitchen: Kitchen, pantry: Pantry) async throws {
-        guard let url = url(pantry: pantry)?.absoluteURL else {
+        guard let url = pathInput.fileURL(pantry: pantry, isDirectory: false)?.absoluteURL else {
             throw Error.notFileURL
         }
         
@@ -96,12 +41,12 @@ public struct Untar: BlockingRecipe {
         let name = url.tarName
 
         let run = Run("tar xf \(url.path)") {
-            "--one-top-level \(name)"
+            "--one-top-level \(url.tarName)"
             "--strip-components 1"
         }
         try await run.injectingPerform(in: kitchen, pantry: pantry)
 
-        nameKeyPath?.store(value: name, in: pantry)
+        pathOutput?.store(filePath: kitchen.currentDirectory.absoluteURL.appendingPathComponent(name).path, pantry: pantry, isDirectory: true)
     }
 }
 

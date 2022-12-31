@@ -10,6 +10,10 @@ import FoundationNetworking
 import SystemPackage
 
 public struct ChDir<T: Recipe>: Recipe {
+    public enum Error: Swift.Error {
+        case unexpectedNilPath
+    }
+
     internal struct Table: Cuisine.Table {
         let kitchen: any Kitchen
 
@@ -25,33 +29,33 @@ public struct ChDir<T: Recipe>: Recipe {
     }
 
     internal let content: () -> (T)
-    internal var path: FilePath
+    internal var location: any FilePathInput
     public let isBlocking: Bool
 
-    public init(_ path: String, blocking: Bool = true, @RecipeBuilder _ content: @escaping () -> (T) = { EmptyRecipe() }) {
-        self.init(FilePath(path), blocking: blocking, content)
-    }
-
-    public init(_ path: FilePath, blocking: Bool = true, @RecipeBuilder _ content: @escaping () -> (T) = { EmptyRecipe() }) {
+    public init<I: FilePathInput>(_ location: I, blocking: Bool = true, @RecipeBuilder _ content: @escaping () -> (T) = { EmptyRecipe() }) {
         self.content = content
-        self.path = path
+        self.location = location
         isBlocking = blocking
     }
 
     public func perform(in kitchen: any Kitchen, pantry: Pantry) async throws {
-        let table = try table(for: kitchen)
+        let table = try table(for: kitchen, pantry: pantry)
         let root = content()
         try await root.injectingPerform(in: table, pantry: pantry)
     }
 
-    internal func table(for kitchen: Kitchen) throws -> ChDir.Table {
+    internal func table(for kitchen: Kitchen, pantry: Pantry) throws -> ChDir.Table {
+        guard let path = location.filePath(pantry: pantry) else {
+            throw Error.unexpectedNilPath
+        }
+        
         let table = ChDir.Table(path: path, kitchen: kitchen)
 
         let fileManager = FileManager.default
         var isDirectory: ObjCBool = false
         
-        if fileManager.fileExists(atPath: table.currentDirectory.path, isDirectory: &isDirectory) == false {
-            try fileManager.createDirectory(at: table.currentDirectory, withIntermediateDirectories: true, attributes: nil)
+        if fileManager.fileExists(atPath: table.currentDirectory.absoluteURL.path, isDirectory: &isDirectory) == false {
+            try fileManager.createDirectory(at: table.currentDirectory.absoluteURL, withIntermediateDirectories: true, attributes: nil)
         }
 
         return table

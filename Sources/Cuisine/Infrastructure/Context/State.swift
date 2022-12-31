@@ -8,11 +8,11 @@
 import TinyFoundation
 
 @propertyWrapper
-public final class State<T> {
+public final class State<Value> {
     @Synchronized
-    public var wrappedValue: T
+    public var wrappedValue: Value
     
-    public init(_ wrappedValue: T) {
+    public init(_ wrappedValue: Value) {
         self.wrappedValue = wrappedValue
     }
 }
