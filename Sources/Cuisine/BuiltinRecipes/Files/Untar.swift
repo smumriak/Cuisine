@@ -18,7 +18,7 @@ public struct Untar: BlockingRecipe {
     internal let pathInput: any FilePathInput
     internal var pathOutput: (any FilePathOutput)?
 
-    init<I: FilePathInput, O: FilePathOutput>(_ pathInput: I, storePathIn pathOutput: O? = nil) {
+    public init<I: FilePathInput, O: FilePathOutput>(_ pathInput: I, storePathIn pathOutput: O? = nil) {
         self.pathInput = pathInput
         self.pathOutput = pathOutput
     }
