@@ -23,7 +23,7 @@ public struct Untar: BlockingRecipe {
     internal let content: ContentStorage
     internal var nameKeyPath: GetFile.KeyPathStorage?
 
-    public init(_ url: URL, storeNameIn nameKeyPath: Pantry.KeyPath<String>?) {
+    public init(_ url: URL, storeNameIn nameKeyPath: Pantry.KeyPath<String>? = nil) {
         content = .url(url)
         if let nameKeyPath {
             self.nameKeyPath = .nonOptional(nameKeyPath)
@@ -37,7 +37,7 @@ public struct Untar: BlockingRecipe {
         }
     }
 
-    public init(_ keyPath: Pantry.KeyPath<URL>, storeNameIn nameKeyPath: Pantry.KeyPath<String>?) {
+    public init(_ keyPath: Pantry.KeyPath<URL>, storeNameIn nameKeyPath: Pantry.KeyPath<String>? = nil) {
         content = .keyPath(keyPath)
         if let nameKeyPath {
             self.nameKeyPath = .nonOptional(nameKeyPath)
@@ -51,7 +51,7 @@ public struct Untar: BlockingRecipe {
         }
     }
 
-    public init(_ keyPath: Pantry.KeyPath<URL?>, storeNameIn nameKeyPath: Pantry.KeyPath<String>?) {
+    public init(_ keyPath: Pantry.KeyPath<URL?>, storeNameIn nameKeyPath: Pantry.KeyPath<String>? = nil) {
         content = .optionalKeyPath(keyPath)
         if let nameKeyPath {
             self.nameKeyPath = .nonOptional(nameKeyPath)

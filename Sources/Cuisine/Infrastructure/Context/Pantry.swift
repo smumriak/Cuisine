@@ -14,15 +14,22 @@ public final class Pantry: Codable {
     public init() {}
     public subscript<K: PantryKey>(key: K.Type) -> K.Value {
         get {
-            if let result = elements[ObjectIdentifier(key)] as? K.Value {
+            let objectIdentifier = ObjectIdentifier(key)
+            if let result = elements[objectIdentifier] as? K.Value {
                 return result
             } else {
-                return key.defaultValue
+                let result = key.defaultValue
+                elements[objectIdentifier] = result
+                return result
             }
         }
         set {
             elements[ObjectIdentifier(key)] = newValue
         }
+    }
+
+    internal func clearItem<K: PantryKey>(for key: K.Type) {
+        elements[ObjectIdentifier(key)] = nil
     }
 
     @Synchronized
@@ -113,5 +120,16 @@ internal extension Recipe {
 
             return true
         }
+    }
+}
+
+public struct RemovePantryItem<K: PantryKey>: BlockingRecipe {
+    let key: K.Type
+    public init(key: K.Type) {
+        self.key = key
+    }
+
+    public func perform(in kitchen: Kitchen, pantry: Pantry) async throws {
+        pantry.clearItem(for: key)
     }
 }
