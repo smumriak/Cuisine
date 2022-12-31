@@ -63,7 +63,7 @@ extension URL: FilePathStore, FilePathStringInitializable {
     }
 }
 
-extension Optional: FilePathStore where Wrapped: FilePathStore & FilePathStringInitializable {
+extension Optional: FilePathStore & FilePathStringInitializable where Wrapped: FilePathStore & FilePathStringInitializable {
     public mutating func store(filePath: String, pantry: Pantry, isDirectory: Bool) {
         self = Wrapped(filePath)
     }
@@ -80,5 +80,9 @@ extension Optional: FilePathStore where Wrapped: FilePathStore & FilePathStringI
             case .none: return nil
             case .some(let content): return content.filePath(pantry: pantry)
         }
+    }
+
+    public init(_ filePath: String) {
+        self = Wrapped(filePath)
     }
 }
