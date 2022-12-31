@@ -49,7 +49,7 @@ public extension Pantry {
     typealias KeyPath<Value> = ReferenceWritableKeyPath<Pantry, Value>
 
     @propertyWrapper
-    struct Item<Value>: PantryItem {
+    struct Item<Value>: PantryItem, Equatable, Hashable {
         @usableFromInline
         final class Storage {
             @usableFromInline
@@ -86,6 +86,14 @@ public extension Pantry {
 
         public init(_ keyPath: WritableKeyPath<Pantry, Value>) {
             self.keyPath = keyPath
+        }
+
+        public static func == (lhs: Pantry.Item<Value>, rhs: Pantry.Item<Value>) -> Bool {
+            ObjectIdentifier(lhs.storage) == ObjectIdentifier(rhs.storage)
+        }
+
+        public func hash(into hasher: inout Hasher) {
+            ObjectIdentifier(storage).hash(into: &hasher)
         }
     }
 }

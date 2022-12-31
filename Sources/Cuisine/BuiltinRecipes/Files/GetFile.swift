@@ -22,10 +22,15 @@ public struct GetFile: Recipe {
 
     public let isBlocking: Bool
 
-    public init<I: URLInput, O: FilePathOutput>(_ location: I, blocking: Bool = true, storePathIn pathOutput: O? = nil) {
+    public init<I: URLInput, O: FilePathOutput>(_ location: I, blocking: Bool = true, storePathIn pathOutput: O) {
         self.location = location
         isBlocking = blocking
         self.pathOutput = pathOutput
+    }
+
+    public init<I: URLInput>(_ location: I, blocking: Bool = true) {
+        self.location = location
+        isBlocking = blocking
     }
 
     public func perform(in kitchen: any Kitchen, pantry: Pantry) async throws {
