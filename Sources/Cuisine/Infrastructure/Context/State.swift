@@ -16,6 +16,8 @@ public final class State<Value>: Hashable {
         self.wrappedValue = wrappedValue
     }
 
+    public var projectedValue: State<Value> { self }
+
     public static func == (lhs: State<Value>, rhs: State<Value>) -> Bool {
         ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
