@@ -17,14 +17,14 @@ public struct Map<Input, Output>: Recipe {
     let output: Pantry.KeyPath<Output>
     public let isBlocking: Bool
 
-    public init(_ value: Input, output: Pantry.KeyPath<Output>, blocking: Bool = true, _ body: @escaping Body) {
+    public init(_ value: Input, to output: Pantry.KeyPath<Output>, blocking: Bool = true, _ body: @escaping Body) {
         storage = .value(value: value)
         self.output = output
         isBlocking = blocking
         self.body = body
     }
 
-    public init(_ keyPath: Pantry.KeyPath<Input>, output: Pantry.KeyPath<Output>, blocking: Bool = true, _ body: @escaping Body) {
+    public init(_ keyPath: Pantry.KeyPath<Input>, to output: Pantry.KeyPath<Output>, blocking: Bool = true, _ body: @escaping Body) {
         storage = .keyPath(keyPath: keyPath)
         self.output = output
         isBlocking = blocking
