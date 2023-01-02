@@ -6,5 +6,6 @@
 //
 
 public struct EmptyRecipe: BlockingRecipe {
+    public init() {}
     public func perform(in kitchen: Kitchen, pantry: Pantry) async throws {}
 }
