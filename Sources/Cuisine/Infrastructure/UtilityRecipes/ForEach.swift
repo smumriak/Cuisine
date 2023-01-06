@@ -36,7 +36,7 @@ public struct ForEach<Data: RandomAccessCollection, Content: Recipe>: SupportsNo
         isBlocking = blocking
     }
 
-    func perform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, Error>) async throws {
+    public func perform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, Error>) async throws {
         for recipe in recipes {
             if let recipe = recipe as? TupleRecipeProtocol {
                 try await recipe.injectingPerform(in: kitchen, pantry: pantry, taskGroup: &group, traversalMode: mode.binaryTreeTraversalMode)

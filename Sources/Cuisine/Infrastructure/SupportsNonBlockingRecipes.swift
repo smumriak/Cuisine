@@ -5,12 +5,12 @@
 //  Created by Serhii Mumriak on 24.12.2022
 //
 
-internal protocol SupportsNonBlockingRecipes: Recipe {
+public protocol SupportsNonBlockingRecipes: Recipe {
     func perform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, any Swift.Error>) async throws
 }
 
-extension SupportsNonBlockingRecipes {
-    public func perform(in kitchen: Kitchen, pantry: Pantry) async throws {
+public extension SupportsNonBlockingRecipes {
+    func perform(in kitchen: Kitchen, pantry: Pantry) async throws {
         try await withThrowingTaskGroup(of: Void.self) { group in
             try await perform(in: kitchen, pantry: pantry, taskGroup: &group)
             
@@ -18,7 +18,7 @@ extension SupportsNonBlockingRecipes {
         }
     }
 
-    public func injectingPerform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, any Swift.Error>) async throws {
+    func injectingPerform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, any Swift.Error>) async throws {
         injectPantry(pantry)
         try await perform(in: kitchen, pantry: pantry, taskGroup: &group)
     }

@@ -18,7 +18,7 @@ public struct Group: SupportsNonBlockingRecipes {
         self.init([content()], blocking: blocking)
     }
 
-    func perform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, Error>) async throws {
+    public func perform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, Error>) async throws {
         for recipe in recipes {
             if let recipe = recipe as? TupleRecipeProtocol {
                 try await recipe.injectingPerform(in: kitchen, pantry: pantry, taskGroup: &group, traversalMode: .default)
