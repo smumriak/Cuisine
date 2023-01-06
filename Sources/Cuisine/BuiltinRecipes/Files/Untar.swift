@@ -50,7 +50,7 @@ public struct Untar: BlockingRecipe {
     }
 }
 
-extension URL {
+public extension URL {
     var isTarArchive: Bool {
         let firstPathExtension = pathExtension.lowercased()
         
