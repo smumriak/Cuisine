@@ -9,7 +9,7 @@ import ShellOut
 
 public struct Run: Recipe {
     @resultBuilder
-    public struct Builder {
+    public enum Builder {
         public static func buildBlock(_ component: String) -> [String] {
             [component]
         }

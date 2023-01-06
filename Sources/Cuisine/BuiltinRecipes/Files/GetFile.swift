@@ -92,7 +92,7 @@ extension URLSession {
 
 public struct MultiFileGet: Recipe {
     @resultBuilder
-    public struct Builder {
+    public enum Builder {
         public static func buildExpression(_ strings: String...) -> [URL] {
             return strings.map { URL(string: $0)! }
         }

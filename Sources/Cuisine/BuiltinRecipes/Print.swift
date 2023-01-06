@@ -7,7 +7,7 @@
 
 public struct Print: BlockingRecipe {
     @resultBuilder
-    public struct Builder {
+    public enum Builder {
         public static func buildExpression(_ expression: String...) -> [String] {
             return expression
         }

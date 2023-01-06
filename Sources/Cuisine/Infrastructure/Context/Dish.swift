@@ -6,7 +6,7 @@
 //
 
 @resultBuilder
-public struct RecipeBuilder {
+public enum RecipeBuilder {
     public static func buildExpression(_ expression: some Recipe) -> some Recipe {
         expression
     }
