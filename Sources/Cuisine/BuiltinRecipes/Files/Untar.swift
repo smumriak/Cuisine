@@ -18,7 +18,7 @@ public struct Untar: BlockingRecipe {
     internal let pathInput: any FilePathInput
     internal var pathOutput: (any FilePathOutput)?
 
-    public init<I: FilePathInput, O: FilePathOutput>(_ pathInput: I, storePathIn pathOutput: O? = nil) {
+    public init(_ pathInput: some FilePathInput, storePathIn pathOutput: (some FilePathOutput)? = nil) {
         self.pathInput = pathInput
         self.pathOutput = pathOutput
     }
@@ -29,7 +29,7 @@ public struct Untar: BlockingRecipe {
         }
         
         guard url.isFileURL == true,
-              url.isTarArchive else {
+              url.isTarArchive == true else {
             throw Error.unsupportedArchive
         }
 
