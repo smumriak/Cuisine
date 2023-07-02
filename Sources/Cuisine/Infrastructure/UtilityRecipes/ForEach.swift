@@ -30,6 +30,7 @@ public struct ForEach<Input: RandomAccessCollection, Result: Recipe>: SupportsNo
         case keyPath(Pantry.KeyPath<Input>)
         case state(State<Input>)
 
+        @_transparent
         func buildRecipes(in kitchen: Kitchen, pantry: Pantry, content: Content) throws -> [Result] {
             let input: Input
             switch self {
