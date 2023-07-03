@@ -6,7 +6,7 @@
       "location" : "https://github.com/smumriak/AppKid",
       "state" : {
         "branch" : "main",
-        "revision" : "d1fe08f19d4e8e090ccd38a0026d368a02ed716b"
+        "revision" : "a9876cae695d2c7762ddadb959ac7c9f0ac7c5be"
       }
     },
     {
@@ -15,7 +15,16 @@
       "location" : "https://github.com/recp/cglm",
       "state" : {
         "branch" : "master",
-        "revision" : "a38622e1d63855d404ccc3a7b8bab4af0e1ab9cc"
+        "revision" : "487b18e326ba43ad1bc3ec19b388c5186476ed9d"
+      }
+    },
+    {
+      "identity" : "semanticversion",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftPackageIndex/SemanticVersion.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a70840d5fca686ae3bd2fcf8aecc5ded0bd4f125"
       }
     },
     {
@@ -32,8 +41,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
       "state" : {
-        "revision" : "fddd1c00396eed152c45a46bea9f47b98e59301d",
-        "version" : "1.2.0"
+        "revision" : "fee6933f37fde9a5e12a1e4aeaa93fe60116ff2a",
+        "version" : "1.2.2"
+      }
+    },
+    {
+      "identity" : "swift-atomics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-atomics.git",
+      "state" : {
+        "revision" : "6c89474e62719ddcc1e9614989fff2f68208fe10",
+        "version" : "1.1.0"
       }
     },
     {
@@ -59,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-system.git",
       "state" : {
-        "revision" : "836bc4557b74fe6d2660218d56e3ce96aff76574",
-        "version" : "1.1.1"
+        "revision" : "025bcb1165deab2e20d4eaba79967ce73013f496",
+        "version" : "1.2.1"
       }
     },
     {
@@ -69,7 +87,7 @@
       "location" : "https://github.com/apple/swift-tools-support-core",
       "state" : {
         "branch" : "main",
-        "revision" : "284a41800b7c5565512ec6ae21ee818aac1f84ac"
+        "revision" : "580248410c553f08fc9f01d0246453f89e6192b1"
       }
     },
     {
@@ -77,8 +95,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CoreOffice/XMLCoder.git",
       "state" : {
-        "revision" : "c438dad94f6a243b411b70a4b4bac54595064808",
-        "version" : "0.15.0"
+        "revision" : "b1e944cbd0ef33787b13f639a5418d55b3bed501",
+        "version" : "0.17.1"
+      }
+    },
+    {
+      "identity" : "yams",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jpsim/Yams.git",
+      "state" : {
+        "revision" : "0d9ee7ea8c4ebd4a489ad7a73d5c6cad55d6fed3",
+        "version" : "5.0.6"
       }
     }
   ],
