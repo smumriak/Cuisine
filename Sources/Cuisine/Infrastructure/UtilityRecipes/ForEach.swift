@@ -21,32 +21,8 @@ internal extension ForEachMode {
     }
 }
 
-public struct ForEach<Input: RandomAccessCollection, Result: Recipe>: SupportsNonBlockingRecipes {
+public struct ForEach<Input: RandomAccessCollection, InputStorage: InputArgument<Input>, Result: Recipe>: SupportsNonBlockingRecipes {
     public typealias Content = (Input.Element) throws -> Result
-
-    @usableFromInline
-    internal enum InputStorage {
-        case value(Input)
-        case keyPath(Pantry.KeyPath<Input>)
-        case state(State<Input>)
-
-        @_transparent
-        func buildRecipes(in kitchen: Kitchen, pantry: Pantry, content: Content) throws -> [Result] {
-            let input: Input
-            switch self {
-                case .value(let value):
-                    input = value
-                 
-                case .keyPath(let keypath):
-                    input = pantry[keyPath: keypath]
-                 
-                case .state(let state):
-                    input = state.wrappedValue
-            }
-
-            return try input.map(content)
-        }
-    }
 
     let input: InputStorage
     let content: Content
@@ -54,23 +30,24 @@ public struct ForEach<Input: RandomAccessCollection, Result: Recipe>: SupportsNo
 
     public let isBlocking: Bool
     
+    // smumriak: I tried to make this a generic init, but doing so will break type inference for provided KeyPath's. and it's never going to happen since it would be an unsolvable problem on compiler side
     @_transparent
-    public init(_ value: Input, mode: ForEachMode = .default, blocking: Bool = true, @RecipeBuilder content: @escaping Content) {
-        self.init(.value(value), mode: mode, blocking: blocking, content: content)
+    public init(_ value: Input, mode: ForEachMode = .default, blocking: Bool = true, @RecipeBuilder content: @escaping Content) where InputStorage == ValueStorage<Input> {
+        self.init(input: ValueStorage(value), mode: mode, blocking: blocking, content: content)
     }
 
     @_transparent
-    public init(_ keyPath: Pantry.KeyPath<Input>, mode: ForEachMode = .default, blocking: Bool = true, @RecipeBuilder content: @escaping Content) {
-        self.init(.keyPath(keyPath), mode: mode, blocking: blocking, content: content)
+    public init(_ keyPath: Pantry.KeyPath<Input>, mode: ForEachMode = .default, blocking: Bool = true, @RecipeBuilder content: @escaping Content) where InputStorage == Pantry.KeyPath<Input> {
+        self.init(input: keyPath, mode: mode, blocking: blocking, content: content)
     }
 
     @_transparent
-    public init(_ state: State<Input>, mode: ForEachMode = .default, blocking: Bool = true, @RecipeBuilder content: @escaping Content) {
-        self.init(.state(state), mode: mode, blocking: blocking, content: content)
+    public init(_ state: State<Input>, mode: ForEachMode = .default, blocking: Bool = true, @RecipeBuilder content: @escaping Content) where InputStorage == State<Input> {
+        self.init(input: state, mode: mode, blocking: blocking, content: content)
     }
 
     @usableFromInline
-    internal init(_ input: InputStorage, mode: ForEachMode, blocking: Bool, content: @escaping Content) {
+    internal init(input: InputStorage, mode: ForEachMode, blocking: Bool, content: @escaping Content) {
         self.input = input
         self.content = content
         self.mode = mode
@@ -78,7 +55,7 @@ public struct ForEach<Input: RandomAccessCollection, Result: Recipe>: SupportsNo
     }
 
     public func perform(in kitchen: Kitchen, pantry: Pantry, taskGroup group: inout ThrowingTaskGroup<Void, Error>) async throws {
-        let recipes = try input.buildRecipes(in: kitchen, pantry: pantry, content: content)
+        let recipes = try await input.value(in: kitchen, pantry: pantry).map(content)
         for recipe in recipes {
             if let recipe = recipe as? TupleRecipeProtocol {
                 try await recipe.injectingPerform(in: kitchen, pantry: pantry, taskGroup: &group, traversalMode: mode.binaryTreeTraversalMode)
