@@ -21,7 +21,7 @@ internal extension ForEachMode {
     }
 }
 
-public struct ForEach<Input: RandomAccessCollection, InputStorage: InputArgument<Input>, Result: Recipe>: SupportsNonBlockingRecipes {
+public struct ForEach<Input: Collection, InputStorage: InputArgument<Input>, Result: Recipe>: SupportsNonBlockingRecipes {
     public typealias Content = (Input.Element) throws -> Result
 
     let input: InputStorage
