@@ -15,6 +15,12 @@ public protocol Kitchen {
     var currentDirectory: URL { get }
 }
 
+public extension Kitchen {
+    var currentDirectory: FilePath {
+        FilePath(currentDirectory.absoluteURL.path)
+    }
+}
+
 public struct EmptyKitchen: Kitchen {
     private static let currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath, isDirectory: true)
 

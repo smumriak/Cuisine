@@ -93,16 +93,16 @@ public struct Run: Recipe {
     public func perform(in kitchen: any Kitchen, pantry: Pantry) async throws {
         let arguments: [String]
         switch storage {
-            case .stringArray(let content):
+            case let .stringArray(content):
                 arguments = content
 
-            case .simple(let content):
+            case let .simple(content):
                 arguments = content()
 
-            case .complex(let content):
+            case let .complex(content):
                 arguments = content(pantry)
         }
-        let output = try shellOut(to: command, arguments: arguments, at: kitchen.currentDirectory.absoluteURL.path)
+        let output = try shellOut(to: command, arguments: arguments, at: kitchen.currentDirectory.string)
         print(output)
     }
 }
