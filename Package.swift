@@ -10,7 +10,6 @@ let package = Package(
         .library(name: "CuisineArgumentParser", targets: ["CuisineArgumentParser"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/smumriak/ShellOut.git", branch: "master"),
         .package(url: "https://github.com/apple/swift-system", from: "1.0.0"),
         .package(url: "https://github.com/philipturner/swift-reflection-mirror", branch: "main"),
         .package(url: "https://github.com/smumriak/AppKid", branch: "main"),
@@ -26,10 +25,11 @@ let package = Package(
         .target(
             name: "Cuisine",
             dependencies: [
-                .product(name: "ShellOut", package: "ShellOut"),
+                "Spoon",
                 .product(name: "SystemPackage", package: "swift-system"),
                 .product(name: "ReflectionMirror", package: "swift-reflection-mirror"),
                 .product(name: "TinyFoundation", package: "AppKid"),
+                .product(name: "LinuxSys", package: "AppKid"),
             ]),
         .target(
             name: "CuisineArgumentParser",
@@ -37,6 +37,7 @@ let package = Package(
                 "Cuisine",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]),
+        .target(name: "Spoon"),
         .testTarget(
             name: "CuisineTests",
             dependencies: ["Cuisine"]),

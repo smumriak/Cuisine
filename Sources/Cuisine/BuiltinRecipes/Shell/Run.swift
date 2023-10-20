@@ -5,7 +5,8 @@
 //  Created by Serhii Mumriak on 23.09.2022
 //
 
-import ShellOut
+import Foundation
+import TinyFoundation
 
 public struct Run: Recipe {
     @resultBuilder
@@ -102,7 +103,14 @@ public struct Run: Recipe {
             case let .complex(content):
                 arguments = content(pantry)
         }
-        let output = try shellOut(to: command, arguments: arguments, at: kitchen.currentDirectory.string)
-        print(output)
+
+        let flatCommandArgument = ([command] + arguments).joined(separator: " ")
+
+        let pid = try spoonProcess(executablePath: kitchen.currentShell, arguments: ["-c", flatCommandArgument], environment: kitchen.env, workDirectoryPath: kitchen.currentDirectory)
+
+        var status: CInt = 0
+        if waitpid(pid, &status, 0) == -1 {
+            fatalError()
+        }
     }
 }

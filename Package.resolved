@@ -28,15 +28,6 @@
       }
     },
     {
-      "identity" : "shellout",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/smumriak/ShellOut.git",
-      "state" : {
-        "branch" : "master",
-        "revision" : "fa523e38d91da06078bfcbc7c166acfddc150e23"
-      }
-    },
-    {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
