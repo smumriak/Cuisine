@@ -25,7 +25,6 @@ let package = Package(
         .target(
             name: "Cuisine",
             dependencies: [
-                "Spoon",
                 .product(name: "SystemPackage", package: "swift-system"),
                 .product(name: "ReflectionMirror", package: "swift-reflection-mirror"),
                 .product(name: "TinyFoundation", package: "AppKid"),
@@ -37,7 +36,6 @@ let package = Package(
                 "Cuisine",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]),
-        .target(name: "Spoon"),
         .testTarget(
             name: "CuisineTests",
             dependencies: ["Cuisine"]),

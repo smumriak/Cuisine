@@ -6,7 +6,7 @@
       "location" : "https://github.com/smumriak/AppKid",
       "state" : {
         "branch" : "main",
-        "revision" : "a9876cae695d2c7762ddadb959ac7c9f0ac7c5be"
+        "revision" : "1ac94c393ada615fce026f24374782a288ba9434"
       }
     },
     {
@@ -15,16 +15,16 @@
       "location" : "https://github.com/recp/cglm",
       "state" : {
         "branch" : "master",
-        "revision" : "487b18e326ba43ad1bc3ec19b388c5186476ed9d"
+        "revision" : "d93b46bab709c80c3c738462134ae96724e60f5c"
       }
     },
     {
       "identity" : "semanticversion",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftPackageIndex/SemanticVersion.git",
+      "location" : "https://github.com/smumriak/SemanticVersion.git",
       "state" : {
         "branch" : "main",
-        "revision" : "a70840d5fca686ae3bd2fcf8aecc5ded0bd4f125"
+        "revision" : "d8070b9edb47c0f526128b8e08e87c7709d10ed9"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
       "state" : {
-        "revision" : "fee6933f37fde9a5e12a1e4aeaa93fe60116ff2a",
-        "version" : "1.2.2"
+        "revision" : "8f4d2753f0e4778c76d5f05ad16c74f707390531",
+        "version" : "1.2.3"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-atomics.git",
       "state" : {
-        "revision" : "6c89474e62719ddcc1e9614989fff2f68208fe10",
-        "version" : "1.1.0"
+        "revision" : "cd142fd2f64be2100422d658e7411e39489da985",
+        "version" : "1.2.0"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "937e904258d22af6e447a0b72c0bc67583ef64a2",
-        "version" : "1.0.4"
+        "revision" : "a902f1823a7ff3c9ab2fba0f992396b948eda307",
+        "version" : "1.0.5"
       }
     },
     {
@@ -78,7 +78,7 @@
       "location" : "https://github.com/apple/swift-tools-support-core",
       "state" : {
         "branch" : "main",
-        "revision" : "580248410c553f08fc9f01d0246453f89e6192b1"
+        "revision" : "3b13e439a341bbbfe0f710c7d1be37221745ef1a"
       }
     },
     {
